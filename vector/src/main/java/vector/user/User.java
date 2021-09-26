@@ -21,7 +21,6 @@ public class User {
 	private String email;
 	@NotEmpty
 	private String password;
-	
 	private String firstname;
 	private String lastname;
 	
