@@ -22,6 +22,7 @@ public class UserService {
 	/**
 	 * Calls upon the UserRepository to add a new user
 	 * @param user The user object to be added into the database
+	 * @return Either a HTTP status of 200 if successful or 400 displayed as an Error object
 	 */
 	public Object addUser(User user) {
 		//check user doesn't already exist
@@ -30,7 +31,7 @@ public class UserService {
 				userRepository.save(user);				
 			} catch (Exception ex) {
 				//transaction rollback, user's email was not a proper email address
-				return new Error("400", "Invalid Email Address");
+				return new Error("400", "Please ensure your password isn't empty and that you've entered a valid email");
 			}
 			//successful new user
 			return new ResponseEntity<>("The user was successfully created", HttpStatus.CREATED);
@@ -42,7 +43,7 @@ public class UserService {
 	/**
 	 * Calls upon the UserRepository to get a user
 	 * @param email The email of the user to retrieve
-	 * @return The user account linked to the email parameter
+	 * @return either the User if found or a HTTP status of 400/404 displayed as an Error object
 	 */
 	public Object getUser(String email) {
 		//check if email is valid
@@ -71,24 +72,24 @@ public class UserService {
 	/**
 	 * Calls upon the UserRepository to update a user
 	 * @param user The user object to be updated
+	 * @return either a HTTP status of 204 if successful, else 400/404 displayed as an Error object
 	 */
 	public Object updateUser(User user, String email) {
 		//check if user exists
 		if(findUser(email) != null) {
-			//check if email is valid
-			boolean valid = EmailValidator.getInstance().isValid(email);
-			if(valid) {
-				userRepository.save(user);	
+			//check if details to update are valid
+			try {
+				userRepository.save(user);						
+			} catch (Exception ex) {
+				return new Error("400", "Please ensure the details your updating are valid");
+			}
 
-				//if user updated their email, a new account is created as "email" is a Primary Key and therefore cannot be changed
-				//so we must check if email is different, if different, delete old account as there is a new account with the new email
-				if(!user.getEmail().equals(email)) {
-					deleteUser(email);
-				}
-				return new ResponseEntity<>("The user was updated successfully", HttpStatus.NO_CONTENT);
-			} else {
-				return new Error("400", "Email Syntax is Invalid");
-			}			
+			//if user updated their email, a new account is created as "email" is a Primary Key and therefore cannot be changed
+			//so we must check if email is different, if different, delete old account as there is a new account with the new email
+			if(!user.getEmail().equals(email)) {
+				deleteUser(email);
+			}
+			return new ResponseEntity<>("The user was updated successfully", HttpStatus.NO_CONTENT);
 		}
 		return new Error("404", "User does not exist");
 	}
@@ -96,6 +97,7 @@ public class UserService {
 	/**
 	 * Calls upon the UserRepository to delete a user
 	 * @param email The email of account to be deleted
+	 * @return either a HTTP status of 204 if successful, else 400 displayed as an Error object
 	 */
 	public Object deleteUser(String email) {
 		//check if user exists

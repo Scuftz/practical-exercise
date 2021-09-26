@@ -34,7 +34,6 @@ public class UserController {
 	 */
 	@RequestMapping("/users/{email}")
 	public Object getUser(@PathVariable String email) {
-		System.out.println("joe");
 		return userService.getUser(email);
 	}
 	
@@ -43,8 +42,8 @@ public class UserController {
 	 * @param user The user object in the request body to be updated
 	 */
 	@RequestMapping(method = RequestMethod.PUT, value="/users/{email}")
-	public void updateUser(@RequestBody User user, @PathVariable String email) {
-		userService.updateUser(user, email);
+	public Object updateUser(@RequestBody User user, @PathVariable String email) {
+		return userService.updateUser(user, email);
 	}
 	
 	/**
