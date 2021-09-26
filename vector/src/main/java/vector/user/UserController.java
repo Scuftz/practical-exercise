@@ -23,8 +23,8 @@ public class UserController {
 	 * @param user The User object stored in request body
 	 */
 	@RequestMapping(method = RequestMethod.POST, value="/users")
-	public void addUser(@RequestBody User user) {
-		userService.addUser(user);
+	public Object addUser(@RequestBody User user) {
+		return userService.addUser(user);
 	}
 	
 	/**
@@ -33,7 +33,8 @@ public class UserController {
 	 * @return The user object
 	 */
 	@RequestMapping("/users/{email}")
-	public User getUser(@PathVariable String email) {
+	public Object getUser(@PathVariable String email) {
+		System.out.println("joe");
 		return userService.getUser(email);
 	}
 	
@@ -42,8 +43,8 @@ public class UserController {
 	 * @param user The user object in the request body to be updated
 	 */
 	@RequestMapping(method = RequestMethod.PUT, value="/users/{email}")
-	public void updateUser(@RequestBody User user) {
-		userService.updateUser(user);
+	public void updateUser(@RequestBody User user, @PathVariable String email) {
+		userService.updateUser(user, email);
 	}
 	
 	/**
@@ -51,7 +52,7 @@ public class UserController {
 	 * @param email The user's email is used to delete that specific account
 	 */
 	@RequestMapping(method = RequestMethod.DELETE, value="/users/{email}")
-	public void deleteUser(@PathVariable String email) {
-		userService.deleteUser(email);
+	public Object deleteUser(@PathVariable String email) {
+		return userService.deleteUser(email);
 	}
 }
