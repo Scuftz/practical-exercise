@@ -9,5 +9,4 @@ public class VectorApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(VectorApplication.class, args);
 	}
-
 }
